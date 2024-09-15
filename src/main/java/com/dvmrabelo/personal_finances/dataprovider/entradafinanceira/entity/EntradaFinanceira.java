@@ -29,6 +29,14 @@ public class EntradaFinanceira {
     @JoinColumn(name = "user_id")
     private UserEntity createdBy;
 
+    public EntradaFinanceira(LocalDate data, BigDecimal valor, EntradaFinanceiraTipo tipo, UserEntity createdBy, String descricao) {
+        this.data = data;
+        this.valor = valor;
+        this.tipo = tipo;
+        this.createdBy = createdBy;
+        this.descricao = descricao;
+    }
+
     public Long getId() {
         return id;
     }

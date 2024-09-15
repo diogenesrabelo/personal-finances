@@ -3,10 +3,12 @@ package com.dvmrabelo.personal_finances.core.usecases;
 import com.dvmrabelo.personal_finances.core.domain.CustomUserDetails;
 import com.dvmrabelo.personal_finances.dataprovider.entradafinanceira.entity.EntradaFinanceira;
 import com.dvmrabelo.personal_finances.dataprovider.entradafinanceira.repository.EntradaFinanceiraRepository;
+import com.dvmrabelo.personal_finances.dataprovider.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,30 +20,25 @@ public class EntradaFinanceiraUseCase {
     @Autowired
     private EntradaFinanceiraRepository entradaFinanceiraRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @PreAuthorize("hasRole('USER')")
     public List<EntradaFinanceira> findAll() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
+        Long userId = getUserId();
 
         return entradaFinanceiraRepository.findAllByUserId(userId);
     }
 
     @PreAuthorize("hasRole('USER')")
     public Optional<EntradaFinanceira> findById(Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
+        Long userId = getUserId();
 
         return entradaFinanceiraRepository.findByUserIdAndId(userId, id);
     }
 
     @PreAuthorize("hasRole('USER')")
     public EntradaFinanceira createEntradaFinanceira(EntradaFinanceira entradaFinanceira) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
-
         return entradaFinanceiraRepository.save(entradaFinanceira);
     }
 
@@ -63,11 +60,24 @@ public class EntradaFinanceiraUseCase {
     }
 
     public boolean isUserEntradaFinanceiraOwner(Long entradaId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
+        Long userId = getUserId();
 
         Optional<EntradaFinanceira> documentOpt = entradaFinanceiraRepository.findById(entradaId);
         return documentOpt.map(document -> document.getCreatedBy().equals(userId)).orElse(false);
+    }
+
+    private Long getUserId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String name;
+        if (principal instanceof UserDetails) {
+            name = ((UserDetails)principal).getUsername();
+            var user = userRepository.findByUsername(name);
+            if (user.isEmpty()) {
+                throw new RuntimeException("Usuário não encontrado.");
+            }
+            return user.get().getId();
+        } else {
+            throw new RuntimeException("Usuário não encontrado.");
+        }
     }
 }

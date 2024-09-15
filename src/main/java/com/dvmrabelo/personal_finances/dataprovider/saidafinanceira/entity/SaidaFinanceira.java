@@ -51,6 +51,14 @@ public class SaidaFinanceira {
                 return createdBy;
         }
 
+        public SaidaFinanceira(LocalDate data, BigDecimal valor, SaidaFinanceiraTipo tipo, UserEntity createdBy, String descricao) {
+                this.data = data;
+                this.valor = valor;
+                this.tipo = tipo;
+                this.createdBy = createdBy;
+                this.descricao = descricao;
+        }
+
         public void setDados(SaidaFinanceira saida) {
                 this.data = saida.getData();
                 this.valor = saida.getValor();

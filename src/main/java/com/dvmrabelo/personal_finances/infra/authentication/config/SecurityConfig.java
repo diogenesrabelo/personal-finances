@@ -1,6 +1,6 @@
 package com.dvmrabelo.personal_finances.infra.authentication.config;
 
-import com.dvmrabelo.personal_finances.core.usecases.UserDetailUseCase;
+import com.dvmrabelo.personal_finances.core.usecases.UserUseCase;
 import com.dvmrabelo.personal_finances.infra.authentication.JwtAuthenticationFilter;
 import com.dvmrabelo.personal_finances.infra.authentication.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
@@ -51,6 +51,6 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDetailUseCase();
+        return new UserUseCase();
     }
 }

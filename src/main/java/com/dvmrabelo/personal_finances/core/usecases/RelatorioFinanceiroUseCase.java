@@ -1,7 +1,7 @@
 package com.dvmrabelo.personal_finances.core.usecases;
 
-import com.dvmrabelo.personal_finances.core.domain.BalancoGeral;
-import com.dvmrabelo.personal_finances.core.domain.RelatorioFinanceiro;
+import com.dvmrabelo.personal_finances.core.domain.output.BalancoGeral;
+import com.dvmrabelo.personal_finances.core.domain.output.RelatorioFinanceiroOutput;
 import com.dvmrabelo.personal_finances.core.domain.Transacao;
 import com.dvmrabelo.personal_finances.dataprovider.entradafinanceira.repository.EntradaFinanceiraRepository;
 import com.dvmrabelo.personal_finances.dataprovider.saidafinanceira.repository.SaidaFinanceiraRepository;
@@ -21,7 +21,7 @@ public class RelatorioFinanceiroUseCase {
     @Autowired
     private SaidaFinanceiraRepository saidaFinanceiraRepository;
 
-    public RelatorioFinanceiro getRelatorioEntradasMensais(int ano, int mes) {
+    public RelatorioFinanceiroOutput getRelatorioEntradasMensais(int ano, int mes) {
         List<Transacao> transacoes = entradaFinanceiraRepository.findByAnoAndMes(ano, mes)
                 .stream()
                 .map(Transacao::convertToTransacaoEntrada)
@@ -31,10 +31,10 @@ public class RelatorioFinanceiroUseCase {
                 .map(Transacao::valor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new RelatorioFinanceiro(transacoes, total);
+        return new RelatorioFinanceiroOutput(transacoes, total);
     }
 
-    public RelatorioFinanceiro getRelatorioEntradasAnual(int ano) {
+    public RelatorioFinanceiroOutput getRelatorioEntradasAnual(int ano) {
         List<Transacao> transacoes = entradaFinanceiraRepository.findByAno(ano)
                 .stream()
                 .map(Transacao::convertToTransacaoEntrada)
@@ -44,10 +44,10 @@ public class RelatorioFinanceiroUseCase {
                 .map(Transacao::valor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new RelatorioFinanceiro(transacoes, total);
+        return new RelatorioFinanceiroOutput(transacoes, total);
     }
 
-    public RelatorioFinanceiro getRelatorioSaidasMensais(int ano, int mes) {
+    public RelatorioFinanceiroOutput getRelatorioSaidasMensais(int ano, int mes) {
         List<Transacao> transacoes = saidaFinanceiraRepository.findByAnoAndMes(ano, mes)
                 .stream()
                 .map(Transacao::convertToTransacaoSaida)
@@ -57,10 +57,10 @@ public class RelatorioFinanceiroUseCase {
                 .map(Transacao::valor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new RelatorioFinanceiro(transacoes, total);
+        return new RelatorioFinanceiroOutput(transacoes, total);
     }
 
-    public RelatorioFinanceiro getRelatorioSaidasAnual(int ano) {
+    public RelatorioFinanceiroOutput getRelatorioSaidasAnual(int ano) {
         List<Transacao> transacoes = saidaFinanceiraRepository.findByAno(ano)
                 .stream()
                 .map(Transacao::convertToTransacaoSaida)
@@ -70,12 +70,12 @@ public class RelatorioFinanceiroUseCase {
                 .map(Transacao::valor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new RelatorioFinanceiro(transacoes, total);
+        return new RelatorioFinanceiroOutput(transacoes, total);
     }
 
     public BalancoGeral getBalancoMensal(int ano, int mes) {
-        RelatorioFinanceiro entradas = getRelatorioEntradasMensais(ano, mes);
-        RelatorioFinanceiro saidas = getRelatorioSaidasMensais(ano, mes);
+        RelatorioFinanceiroOutput entradas = getRelatorioEntradasMensais(ano, mes);
+        RelatorioFinanceiroOutput saidas = getRelatorioSaidasMensais(ano, mes);
 
         BigDecimal diferenca = entradas.total().subtract(saidas.total());
 
@@ -89,8 +89,8 @@ public class RelatorioFinanceiroUseCase {
     }
 
     public BalancoGeral getBalancoAnual(int ano) {
-        RelatorioFinanceiro entradas = getRelatorioEntradasAnual(ano);
-        RelatorioFinanceiro saidas = getRelatorioSaidasAnual(ano);
+        RelatorioFinanceiroOutput entradas = getRelatorioEntradasAnual(ano);
+        RelatorioFinanceiroOutput saidas = getRelatorioSaidasAnual(ano);
 
         BigDecimal diferenca = entradas.total().subtract(saidas.total());
 
