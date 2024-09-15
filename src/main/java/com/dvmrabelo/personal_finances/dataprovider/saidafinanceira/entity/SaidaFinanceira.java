@@ -1,6 +1,6 @@
 package com.dvmrabelo.personal_finances.dataprovider.saidafinanceira.entity;
 
-import com.dvmrabelo.personal_finances.dataprovider.tiposaida.entity.SaidaFinanceiraTipo;
+import com.dvmrabelo.personal_finances.dataprovider.tiposaida.entity.TipoSaidaFinanceira;
 import com.dvmrabelo.personal_finances.dataprovider.user.entity.UserEntity;
 import jakarta.persistence.*;
 
@@ -21,7 +21,7 @@ public class SaidaFinanceira {
 
         @ManyToOne
         @JoinColumn(name = "tipo_id")
-        private SaidaFinanceiraTipo tipo;
+        private TipoSaidaFinanceira tipo;
 
         @ManyToOne
         @JoinColumn(name = "user_id")
@@ -43,7 +43,7 @@ public class SaidaFinanceira {
                 return descricao;
         }
 
-        public SaidaFinanceiraTipo getTipo() {
+        public TipoSaidaFinanceira getTipo() {
                 return tipo;
         }
 
@@ -51,7 +51,7 @@ public class SaidaFinanceira {
                 return createdBy;
         }
 
-        public SaidaFinanceira(LocalDate data, BigDecimal valor, SaidaFinanceiraTipo tipo, UserEntity createdBy, String descricao) {
+        public SaidaFinanceira(LocalDate data, BigDecimal valor, TipoSaidaFinanceira tipo, UserEntity createdBy, String descricao) {
                 this.data = data;
                 this.valor = valor;
                 this.tipo = tipo;
