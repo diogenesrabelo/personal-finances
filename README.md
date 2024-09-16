@@ -11,4 +11,7 @@
 - [ ] Adicionar Swagger
 - [ ] Refatorar o fluxo de autenticação
 - [ ] Refactorar o fluxo dos relatórios e balanços
+- [ ] Adicionar testes unitários
+- [ ] Adicionar testes de integração
+- [ ] Adicionar Dockerfile e docker-compose
 - [ ] Aceito sugestões principalmente relacionado ao fluxo de autenticação e autorização
