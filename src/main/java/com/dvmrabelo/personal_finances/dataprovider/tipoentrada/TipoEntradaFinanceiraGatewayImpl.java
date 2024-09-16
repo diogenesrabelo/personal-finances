@@ -6,6 +6,7 @@ import com.dvmrabelo.personal_finances.core.gateways.TipoEntradaFinanceiraGatewa
 import com.dvmrabelo.personal_finances.dataprovider.tipoentrada.entity.TipoEntradaFinanceira;
 import com.dvmrabelo.personal_finances.dataprovider.tipoentrada.mapper.TipoEntradaFinanceiraEntityMapper;
 import com.dvmrabelo.personal_finances.dataprovider.tipoentrada.repository.TipoEntradaFinanceiraRepository;
+import com.dvmrabelo.personal_finances.dataprovider.user.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -15,20 +16,27 @@ public class TipoEntradaFinanceiraGatewayImpl implements TipoEntradaFinanceiraGa
     @Autowired
     private TipoEntradaFinanceiraRepository tipoEntradaFinanceiraRepository;
 
-    public TipoEntradaFinanceiraOutput save(TipoEntradaFinanceiraInput tipoEntradaFinanceiraInput) {
+    public TipoEntradaFinanceiraOutput save(TipoEntradaFinanceiraInput tipoEntradaFinanceiraInput, UserEntity user) {
         return TipoEntradaFinanceiraEntityMapper.toDomain(
                 tipoEntradaFinanceiraRepository.save(
-                        TipoEntradaFinanceiraEntityMapper.toEntity(tipoEntradaFinanceiraInput)
+                        TipoEntradaFinanceiraEntityMapper.toEntity(tipoEntradaFinanceiraInput, user)
                 )
         );
     }
 
-    public TipoEntradaFinanceiraOutput update(TipoEntradaFinanceiraInput tipoEntradaFinanceiraInput) {
-        return TipoEntradaFinanceiraEntityMapper.toDomain(
-                tipoEntradaFinanceiraRepository.save(
-                        TipoEntradaFinanceiraEntityMapper.toEntity(tipoEntradaFinanceiraInput)
-                )
+    public TipoEntradaFinanceiraOutput update(TipoEntradaFinanceiraInput tipoEntradaFinanceiraInput, Long tipoEntradaFinanceiraId) {
+        TipoEntradaFinanceira tipoEntradaFinanceira = tipoEntradaFinanceiraRepository.findById(tipoEntradaFinanceiraId).get();
+        TipoEntradaFinanceira updated = new TipoEntradaFinanceira(
+                tipoEntradaFinanceira.id(),
+                tipoEntradaFinanceiraInput.nome(),
+                tipoEntradaFinanceiraInput.descricao(),
+                tipoEntradaFinanceira.isAtivo(),
+                tipoEntradaFinanceira.getCreatedBy()
         );
+        return TipoEntradaFinanceiraEntityMapper.toDomain(
+                tipoEntradaFinanceiraRepository.save(updated)
+        );
+
     }
 
     public void delete(Long id) {
@@ -51,7 +59,7 @@ public class TipoEntradaFinanceiraGatewayImpl implements TipoEntradaFinanceiraGa
         return tipoEntradaFinanceiraRepository.findAllByUserId(userId).stream().map(TipoEntradaFinanceiraEntityMapper::toDomain).toList();
     }
 
-    void deactivateTipoEntrada(Long id) {
+    public void deactivateTipoEntrada(Long id) {
         var tipo = tipoEntradaFinanceiraRepository.findById(id).get();
 
         TipoEntradaFinanceira desativado = new TipoEntradaFinanceira(

@@ -1,7 +1,8 @@
 package com.dvmrabelo.personal_finances.entrypoint.api.tiposaidafinanceira;
 
-import com.dvmrabelo.personal_finances.core.usecases.SaidaFinanceiraTipoUseCase;
-import com.dvmrabelo.personal_finances.dataprovider.tiposaida.entity.TipoSaidaFinanceira;
+import com.dvmrabelo.personal_finances.entrypoint.api.tiposaidafinanceira.dto.TipoSaidaFinanceiraInputDTO;
+import com.dvmrabelo.personal_finances.entrypoint.api.tiposaidafinanceira.dto.TipoSaidaFinanceiraOutputDTO;
+import com.dvmrabelo.personal_finances.entrypoint.api.tiposaidafinanceira.facade.TipoSaidaFinanceiraFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,36 +14,32 @@ import java.util.List;
 public class TipoSaidaFinanceiraController {
 
     @Autowired
-    private SaidaFinanceiraTipoUseCase saidaFinanceiraTipoService;
+    private TipoSaidaFinanceiraFacade tipoSaidaFinanceiraFacade;
 
     @GetMapping
-    public ResponseEntity<List<TipoSaidaFinanceira>> findAll() {
-        return ResponseEntity.ok(saidaFinanceiraTipoService.findAll());
+    public ResponseEntity<List<TipoSaidaFinanceiraOutputDTO>> findAll() {
+        return ResponseEntity.ok(tipoSaidaFinanceiraFacade.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TipoSaidaFinanceira> findById(@PathVariable Long id) {
-        return saidaFinanceiraTipoService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TipoSaidaFinanceiraOutputDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(tipoSaidaFinanceiraFacade.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<TipoSaidaFinanceira> save(@RequestBody TipoSaidaFinanceira tipoSaidaFinanceira) {
-        TipoSaidaFinanceira savedTipo = saidaFinanceiraTipoService.createSaidaFinanceiraTipo(tipoSaidaFinanceira);
+    public ResponseEntity<TipoSaidaFinanceiraOutputDTO> save(@RequestBody TipoSaidaFinanceiraInputDTO tipoSaidaFinanceira) {
+        TipoSaidaFinanceiraOutputDTO savedTipo = tipoSaidaFinanceiraFacade.createTipoSaidaFinanceira(tipoSaidaFinanceira);
         return ResponseEntity.ok(savedTipo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TipoSaidaFinanceira> update(@PathVariable Long id, @RequestBody TipoSaidaFinanceira tipoSaidaFinanceira) {
-        return saidaFinanceiraTipoService.updateSaidaFinanceiraTipo(id, tipoSaidaFinanceira)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TipoSaidaFinanceiraOutputDTO> update(@PathVariable Long id, @RequestBody TipoSaidaFinanceiraInputDTO tipoSaidaFinanceira) {
+        return ResponseEntity.ok(tipoSaidaFinanceiraFacade.updateTipoSaidaFinanceira(id, tipoSaidaFinanceira));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivate(@PathVariable Long id) {
-        saidaFinanceiraTipoService.deactivate(id);
+        tipoSaidaFinanceiraFacade.deactivateTipoSaidaFinanceira(id);
         return ResponseEntity.noContent().build();
     }
 }

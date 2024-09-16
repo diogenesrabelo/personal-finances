@@ -6,6 +6,7 @@ import com.dvmrabelo.personal_finances.core.gateways.TipoSaidaFinanceiraGateway;
 import com.dvmrabelo.personal_finances.dataprovider.tiposaida.entity.TipoSaidaFinanceira;
 import com.dvmrabelo.personal_finances.dataprovider.tiposaida.mapper.TipoSaidaFinanceiraEntityMapper;
 import com.dvmrabelo.personal_finances.dataprovider.tiposaida.repository.TipoSaidaFinanceiraRepository;
+import com.dvmrabelo.personal_finances.dataprovider.user.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -15,16 +16,22 @@ public class TipoSaidaFinanceiraGatewayImpl implements TipoSaidaFinanceiraGatewa
     @Autowired
     private TipoSaidaFinanceiraRepository tipoSaidaFinanceiraRepository;
 
-    public TipoSaidaFinanceiraOutput save(TipoSaidaFinanceiraInput tipoSaidaFinanceiraInput) {
+    public TipoSaidaFinanceiraOutput save(TipoSaidaFinanceiraInput tipoSaidaFinanceiraInput, UserEntity user) {
         return TipoSaidaFinanceiraEntityMapper.toDomain(tipoSaidaFinanceiraRepository.save(
-                TipoSaidaFinanceiraEntityMapper.toEntity(tipoSaidaFinanceiraInput)
+                TipoSaidaFinanceiraEntityMapper.toEntity(tipoSaidaFinanceiraInput, user)
         ));
     }
 
-    public TipoSaidaFinanceiraOutput update(TipoSaidaFinanceiraInput tipoSaidaFinanceiraInput) {
-        return TipoSaidaFinanceiraEntityMapper.toDomain(tipoSaidaFinanceiraRepository.save(
-                TipoSaidaFinanceiraEntityMapper.toEntity(tipoSaidaFinanceiraInput)
-        ));
+    public TipoSaidaFinanceiraOutput update(TipoSaidaFinanceiraInput tipoSaidaFinanceiraInput, Long tipoSaidaFinanceiraId) {
+        TipoSaidaFinanceira tipoSaidaFinanceira = tipoSaidaFinanceiraRepository.findById(tipoSaidaFinanceiraId).get();
+        TipoSaidaFinanceira updated = new TipoSaidaFinanceira(
+                tipoSaidaFinanceira.id(),
+                tipoSaidaFinanceiraInput.nome(),
+                tipoSaidaFinanceiraInput.descricao(),
+                tipoSaidaFinanceira.isAtivo(),
+                tipoSaidaFinanceira.getCreatedBy()
+        );
+        return TipoSaidaFinanceiraEntityMapper.toDomain(tipoSaidaFinanceiraRepository.save(updated));
     }
 
     public void delete(Long id) {

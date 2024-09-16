@@ -10,9 +10,13 @@ public interface SaidaFinanceiraGateway {
 
     SaidaFinanceiraOutput save(SaidaFinanceiraInput saidaFinanceiraInput, UserEntity userEntity);
 
-    void delete(Long id);
+    void deleteById(Long id);
 
-    SaidaFinanceiraOutput findById(Long userId, Long id);
+    SaidaFinanceiraOutput findByUserIdAndId(Long userId, Long id);
 
-    List<SaidaFinanceiraOutput> findAll(Long userId);
+    SaidaFinanceiraOutput findById(Long id);
+
+    List<SaidaFinanceiraOutput> findAllByUserId(Long userId);
+
+    SaidaFinanceiraOutput update(SaidaFinanceiraInput saidaFinanceiraInput, Long saidaFinanceiraId);
 }

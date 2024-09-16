@@ -10,9 +10,13 @@ public interface EntradaFinanceiraGateway {
 
     void delete(Long id);
 
-    EntradaFinanceiraOutput findById(Long userId, Long id);
+    EntradaFinanceiraOutput findByUserIdAndId(Long userId, Long id);
 
-    List<EntradaFinanceiraOutput> findAll(Long userId);
+    List<EntradaFinanceiraOutput> findAllByUserId(Long userId);
+
+    EntradaFinanceiraOutput findById(Long id);
 
     EntradaFinanceiraOutput save(EntradaFinanceiraInput entradaFinanceiraInput, UserEntity userEntity);
+
+    EntradaFinanceiraOutput update(EntradaFinanceiraInput entradaFinanceiraInput, Long entradaFinanceiraId);
 }

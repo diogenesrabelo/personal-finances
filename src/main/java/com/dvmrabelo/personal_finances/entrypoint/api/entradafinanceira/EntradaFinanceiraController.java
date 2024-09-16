@@ -1,7 +1,9 @@
 package com.dvmrabelo.personal_finances.entrypoint.api.entradafinanceira;
 
-import com.dvmrabelo.personal_finances.core.usecases.EntradaFinanceiraUseCase;
 import com.dvmrabelo.personal_finances.dataprovider.entradafinanceira.entity.EntradaFinanceira;
+import com.dvmrabelo.personal_finances.entrypoint.api.entradafinanceira.dto.EntradaFinanceiraInputDTO;
+import com.dvmrabelo.personal_finances.entrypoint.api.entradafinanceira.dto.EntradaFinanceiraOutputDTO;
+import com.dvmrabelo.personal_finances.entrypoint.api.entradafinanceira.facade.EntradaFinanceiraFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,39 +15,32 @@ import java.util.List;
 public class EntradaFinanceiraController {
 
     @Autowired
-    private EntradaFinanceiraUseCase entradaFinanceiraService;
+    private EntradaFinanceiraFacade entradaFinanceiraFacade;
 
     @GetMapping
-    public ResponseEntity<List<EntradaFinanceira>> findAll() {
-        return ResponseEntity.ok(entradaFinanceiraService.findAll());
+    public ResponseEntity<List<EntradaFinanceiraOutputDTO>> findAll() {
+        return ResponseEntity.ok(entradaFinanceiraFacade.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntradaFinanceira> findById(@PathVariable Long id) {
-        return entradaFinanceiraService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<EntradaFinanceiraOutputDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(entradaFinanceiraFacade.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<EntradaFinanceira> save(@RequestBody EntradaFinanceira entradaFinanceira) {
-        EntradaFinanceira savedEntrada = entradaFinanceiraService.createEntradaFinanceira(entradaFinanceira);
+    public ResponseEntity<EntradaFinanceiraOutputDTO> save(@RequestBody EntradaFinanceiraInputDTO entradaFinanceira) {
+        EntradaFinanceiraOutputDTO savedEntrada = entradaFinanceiraFacade.createEntradaFinanceira(entradaFinanceira);
         return ResponseEntity.ok(savedEntrada);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EntradaFinanceira> update(@PathVariable Long id, @RequestBody EntradaFinanceira entradaFinanceira) {
-        return entradaFinanceiraService.updateEntradaFinanceira(id, entradaFinanceira)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<EntradaFinanceiraOutputDTO> update(@PathVariable Long id, @RequestBody EntradaFinanceiraInputDTO entradaFinanceira) {
+        return ResponseEntity.ok(entradaFinanceiraFacade.updateEntradaFinanceira(id, entradaFinanceira));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (entradaFinanceiraService.findById(id).isPresent()) {
-            entradaFinanceiraService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
+        entradaFinanceiraFacade.removeEntradaFinanceira(id);
         return ResponseEntity.notFound().build();
     }
 }

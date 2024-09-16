@@ -23,7 +23,8 @@ public class SaidaFinanceiraEntityMapper {
                 saidaFinanceira.getId(),
                 saidaFinanceira.getData(),
                 saidaFinanceira.getValor(),
-               saidaFinanceira.getTipo().id(),
+                saidaFinanceira.getTipo().id(),
+                saidaFinanceira.getCreatedBy(),
                 saidaFinanceira.getDescricao()
         );
     }

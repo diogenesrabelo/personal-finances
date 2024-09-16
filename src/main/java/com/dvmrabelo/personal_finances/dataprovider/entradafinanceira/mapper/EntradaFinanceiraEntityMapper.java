@@ -25,6 +25,7 @@ public class EntradaFinanceiraEntityMapper {
                 entradaFinanceira.getData(),
                 entradaFinanceira.getValor(),
                 entradaFinanceira.getId(),
+                entradaFinanceira.getCreatedBy(),
                 entradaFinanceira.getDescricao()
         );
     }

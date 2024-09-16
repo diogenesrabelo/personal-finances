@@ -10,7 +10,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-09-15T11:27:46-0300",
+    date = "2024-09-15T21:18:25-0300",
     comments = "version: 1.6.0, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.8.jar, environment: Java 21.0.3 (Amazon.com Inc.)"
 )
 public class SaidaFinanceiraMapperImpl implements SaidaFinanceiraMapper {

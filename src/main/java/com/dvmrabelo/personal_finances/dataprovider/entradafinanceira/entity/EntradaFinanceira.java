@@ -37,6 +37,14 @@ public class EntradaFinanceira {
         this.descricao = descricao;
     }
 
+    public EntradaFinanceira(Long id, LocalDate data, BigDecimal valor, TipoEntradaFinanceira tipo, UserEntity createdBy, String descricao) {
+        this.id = id;
+        this.data = data;
+        this.valor = valor;
+        this.tipo = tipo;
+        this.createdBy = createdBy;
+        this.descricao = descricao;
+    }
     public Long getId() {
         return id;
     }

@@ -1,5 +1,7 @@
 package com.dvmrabelo.personal_finances.core.domain.output;
 
+import com.dvmrabelo.personal_finances.dataprovider.user.entity.UserEntity;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -8,6 +10,7 @@ public record EntradaFinanceiraOutput(
         LocalDate data,
         BigDecimal valor,
         Long tipoId,
+        UserEntity createdBy,
         String descricao
 ) {
 }

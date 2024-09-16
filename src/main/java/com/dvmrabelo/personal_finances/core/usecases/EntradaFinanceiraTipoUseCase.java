@@ -2,12 +2,9 @@ package com.dvmrabelo.personal_finances.core.usecases;
 
 import com.dvmrabelo.personal_finances.core.domain.input.TipoEntradaFinanceiraInput;
 import com.dvmrabelo.personal_finances.core.domain.output.TipoEntradaFinanceiraOutput;
-import com.dvmrabelo.personal_finances.core.gateways.EntradaFinanceiraGateway;
 import com.dvmrabelo.personal_finances.core.gateways.TipoEntradaFinanceiraGateway;
-import com.dvmrabelo.personal_finances.dataprovider.tipoentrada.entity.TipoEntradaFinanceira;
-import com.dvmrabelo.personal_finances.dataprovider.tipoentrada.repository.TipoEntradaFinanceiraRepository;
+import com.dvmrabelo.personal_finances.dataprovider.user.entity.UserEntity;
 import com.dvmrabelo.personal_finances.dataprovider.user.repository.UserRepository;
-import com.dvmrabelo.personal_finances.entrypoint.api.tipoentradafinanceira.dto.TipoEntradaFinanceiraOutputDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EntradaFinanceiraTipoUseCase {
@@ -28,23 +24,23 @@ public class EntradaFinanceiraTipoUseCase {
 
     @PreAuthorize("hasRole('USER')")
     public List<TipoEntradaFinanceiraOutput> findAll() {
-        Long userId = getUserId();
+        Long userId = getUser().getId();
 
         return tipoEntradaFinanceiraGateway.findAll(userId);
     }
 
     @PreAuthorize("hasRole('USER')")
     public TipoEntradaFinanceiraOutput findById(Long id) {
-        Long userId = getUserId();
+        Long userId = getUser().getId();
 
         return tipoEntradaFinanceiraGateway.findById(userId, id);
     }
 
     @PreAuthorize("hasRole('USER')")
     public TipoEntradaFinanceiraOutput createEntradaFinanceiraTipo(TipoEntradaFinanceiraInput tipoEntradaFinanceira) {
-        Long userId = getUserId();
+        UserEntity user = getUser();
 
-        return tipoEntradaFinanceiraGateway.save(tipoEntradaFinanceira);
+        return tipoEntradaFinanceiraGateway.save(tipoEntradaFinanceira, user);
     }
 
     @PreAuthorize("hasRole('USER') and @entradaFinanceiraTipoUseCase.isUserEntradaFinanceiraTipoOwner(#entradaTipoId)")
@@ -53,17 +49,17 @@ public class EntradaFinanceiraTipoUseCase {
     }
 
     public boolean isUserEntradaFinanceiraTipoOwner(Long entradaTipoId) {
-        Long userId = getUserId();
+        Long userId = getUser().getId();
 
         TipoEntradaFinanceiraOutput document = tipoEntradaFinanceiraGateway.findById(entradaTipoId);
         return document.createdBy().getId().equals(userId);
     }
 
-    public TipoEntradaFinanceiraOutput updateEntradaFinanceiraTipo(Long id, TipoEntradaFinanceira tipoEntradaFinanceira) {
-        return tipoEntradaFinanceiraGateway.findById(id);
+    public TipoEntradaFinanceiraOutput updateEntradaFinanceiraTipo(Long id, TipoEntradaFinanceiraInput tipoEntradaFinanceira) {
+        return tipoEntradaFinanceiraGateway.update(tipoEntradaFinanceira, id);
     }
 
-    private Long getUserId() {
+    private UserEntity getUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String name;
         if (principal instanceof UserDetails) {
@@ -72,7 +68,7 @@ public class EntradaFinanceiraTipoUseCase {
             if (user.isEmpty()) {
                 throw new RuntimeException("Usuário não encontrado.");
             }
-            return user.get().getId();
+            return user.get();
         } else {
             throw new RuntimeException("Usuário não encontrado.");
         }

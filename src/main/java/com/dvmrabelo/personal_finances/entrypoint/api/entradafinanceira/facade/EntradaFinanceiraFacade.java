@@ -20,8 +20,8 @@ public class EntradaFinanceiraFacade {
         entradaFinanceiraUseCase.deleteById(id);
     }
 
-    public void findById(Long id) {
-        return entradaFinanceiraUseCase.findById(id).get();
+    public EntradaFinanceiraOutputDTO findById(Long id) {
+        return entradaFinanceiraMapper.toOutputDto(entradaFinanceiraUseCase.findById(id));
     }
 
     public List<EntradaFinanceiraOutputDTO> findAll() {

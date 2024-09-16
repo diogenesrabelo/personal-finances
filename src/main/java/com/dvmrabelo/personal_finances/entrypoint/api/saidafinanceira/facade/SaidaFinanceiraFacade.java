@@ -18,14 +18,13 @@ public class SaidaFinanceiraFacade {
 
     public SaidaFinanceiraOutputDTO createSaidaFinanceira(SaidaFinanceiraInputDTO saidaFinanceiraInputDTO) {
         return saidaFinanceiraMapper.toOutputDto(
-                saidaFinanceiraUseCase.createSaidaFinanceira(saidaFinanceiraMapper.toInput(saidaFinanceiraInputDTO)
-                );
+                saidaFinanceiraUseCase.createSaidaFinanceira(saidaFinanceiraMapper.toInput(saidaFinanceiraInputDTO)));
     }
 
     public SaidaFinanceiraOutputDTO updateSaidaFinanceira(Long id, SaidaFinanceiraInputDTO saidaFinanceiraInputDTO) {
         return saidaFinanceiraMapper.toOutputDto(
                 saidaFinanceiraUseCase.updateSaidaFinanceira(id, saidaFinanceiraMapper.toInput(saidaFinanceiraInputDTO)
-                );
+                ));
     }
 
     public void removeSaidaFinanceira(Long id) {
@@ -33,7 +32,7 @@ public class SaidaFinanceiraFacade {
     }
 
     public SaidaFinanceiraOutputDTO findById(Long id) {
-        return saidaFinanceiraMapper.toOutputDto(saidaFinanceiraUseCase.findById(id).get());
+        return saidaFinanceiraMapper.toOutputDto(saidaFinanceiraUseCase.findById(id));
     }
 
     public List<SaidaFinanceiraOutputDTO> findAll() {

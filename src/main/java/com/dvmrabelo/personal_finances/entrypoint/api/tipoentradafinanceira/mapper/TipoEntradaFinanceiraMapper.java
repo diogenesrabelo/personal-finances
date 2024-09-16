@@ -13,11 +13,11 @@ public interface TipoEntradaFinanceiraMapper {
     @Mapping(target = "nome", source = "nome")
     @Mapping(target = "descricao", source = "descricao")
     @Mapping(target = "ativo", source = "ativo")
-    public TipoEntradaFinanceiraInput toInput(TipoEntradaFinanceiraInputDTO dto);
+    TipoEntradaFinanceiraInput toInput(TipoEntradaFinanceiraInputDTO dto);
 
     @Mapping(target = "nome", source = "nome")
     @Mapping(target = "descricao", source = "descricao")
     @Mapping(target = "ativo", source = "ativo")
     @Mapping(target = "id", source = "id")
-    public TipoEntradaFinanceiraOutputDTO toOutputDto(TipoEntradaFinanceiraOutput dto);
+    TipoEntradaFinanceiraOutputDTO toOutputDto(TipoEntradaFinanceiraOutput dto);
 }

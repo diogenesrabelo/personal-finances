@@ -29,7 +29,7 @@ public class TipoSaidaFinanceiraFacade {
     }
 
     public TipoSaidaFinanceiraOutputDTO findById(Long id) {
-        return tipoSaidaFinanceiraMapper.toOutputDto(saidaFinanceiraTipoUseCase.findById(id).get());
+        return tipoSaidaFinanceiraMapper.toOutputDto(saidaFinanceiraTipoUseCase.findById(id));
     }
 
     public List<TipoSaidaFinanceiraOutputDTO> findAll() {

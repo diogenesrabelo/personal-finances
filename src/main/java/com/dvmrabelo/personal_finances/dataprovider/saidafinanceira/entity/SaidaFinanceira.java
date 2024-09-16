@@ -59,10 +59,12 @@ public class SaidaFinanceira {
                 this.descricao = descricao;
         }
 
-        public void setDados(SaidaFinanceira saida) {
-                this.data = saida.getData();
-                this.valor = saida.getValor();
-                this.tipo = saida.getTipo();
-                this.descricao = saida.getDescricao();
+        public SaidaFinanceira(Long id, LocalDate data, BigDecimal valor, TipoSaidaFinanceira tipo, UserEntity createdBy, String descricao) {
+                this.id = id;
+                this.data = data;
+                this.valor = valor;
+                this.tipo = tipo;
+                this.createdBy = createdBy;
+                this.descricao = descricao;
         }
 }

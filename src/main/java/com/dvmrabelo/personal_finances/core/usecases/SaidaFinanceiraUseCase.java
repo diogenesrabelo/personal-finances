@@ -1,70 +1,63 @@
 package com.dvmrabelo.personal_finances.core.usecases;
 
-import com.dvmrabelo.personal_finances.core.domain.CustomUserDetails;
-import com.dvmrabelo.personal_finances.dataprovider.saidafinanceira.entity.SaidaFinanceira;
-import com.dvmrabelo.personal_finances.dataprovider.saidafinanceira.repository.SaidaFinanceiraRepository;
+import com.dvmrabelo.personal_finances.core.domain.input.SaidaFinanceiraInput;
+import com.dvmrabelo.personal_finances.core.domain.output.SaidaFinanceiraOutput;
+import com.dvmrabelo.personal_finances.core.gateways.SaidaFinanceiraGateway;
+import com.dvmrabelo.personal_finances.dataprovider.user.entity.UserEntity;
 import com.dvmrabelo.personal_finances.dataprovider.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SaidaFinanceiraUseCase {
 
     @Autowired
-    private SaidaFinanceiraRepository saidaFinanceiraRepository;
+    private SaidaFinanceiraGateway saidaFinanceiraGateway;
 
     @Autowired
     private UserRepository userRepository;
 
     @PreAuthorize("hasRole('USER')")
-    public List<SaidaFinanceira> findAll() {
-        Long userId = getUserId();
-        return saidaFinanceiraRepository.findAllByUserId(userId);
+    public List<SaidaFinanceiraOutput> findAll() {
+        Long userId = getUser().getId();
+        return saidaFinanceiraGateway.findAllByUserId(userId);
     }
 
     @PreAuthorize("hasRole('USER')")
-    public Optional<SaidaFinanceira> findById(Long id) {
-        Long userId = getUserId();
-        return saidaFinanceiraRepository.findByUserIdAndId(userId, id);
+    public SaidaFinanceiraOutput findById(Long id) {
+        Long userId = getUser().getId();
+        return saidaFinanceiraGateway.findByUserIdAndId(userId, id);
     }
 
     @PreAuthorize("hasRole('USER')")
-    public SaidaFinanceira createSaidaFinanceira(SaidaFinanceira saidaFinanceira) {
-        return saidaFinanceiraRepository.save(saidaFinanceira);
+    public SaidaFinanceiraOutput createSaidaFinanceira(SaidaFinanceiraInput saidaFinanceira) {
+        UserEntity user = getUser();
+        return saidaFinanceiraGateway.save(saidaFinanceira, user);
     }
 
     @PreAuthorize("hasRole('USER') and @saidaFinanceiraUseCase.isUserSaidaFinanceiraOwner(#saidaId)")
-    public Optional<SaidaFinanceira> updateSaidaFinanceira(Long saidaId, SaidaFinanceira newSaidaFinanceira) {
-         Optional<SaidaFinanceira> saidaFinanceiraOpt = saidaFinanceiraRepository.findById(saidaId);
-         if(saidaFinanceiraOpt.isPresent()) {
-             SaidaFinanceira saidaFinanceira = saidaFinanceiraOpt.get();
-             saidaFinanceira.setDados(newSaidaFinanceira);
-             return Optional.of(saidaFinanceiraRepository.save(saidaFinanceira));
-         } else {
-             return Optional.empty();
-         }
+    public SaidaFinanceiraOutput updateSaidaFinanceira(Long saidaId, SaidaFinanceiraInput newSaidaFinanceira) {
+         return saidaFinanceiraGateway.update(newSaidaFinanceira, saidaId);
     }
 
     @PreAuthorize("hasRole('USER') and @saidaFinanceiraUseCase.isUserSaidaFinanceiraOwner(#saidaId)")
     public void deleteById(Long saidaId) {
-        saidaFinanceiraRepository.deleteById(saidaId);
+        saidaFinanceiraGateway.deleteById(saidaId);
     }
 
     public boolean isUserSaidaFinanceiraOwner(Long documentId) {
-        Long userId = getUserId();
+        UserEntity user = getUser();
 
-        Optional<SaidaFinanceira> documentOpt = saidaFinanceiraRepository.findById(documentId);
-        return documentOpt.map(document -> document.getCreatedBy().equals(userId)).orElse(false);
+        SaidaFinanceiraOutput saidaFinanceiraOutput = saidaFinanceiraGateway.findById(documentId);
+        return  saidaFinanceiraOutput.createdBy().getId().equals(user.getId());
     }
 
-    private Long getUserId() {
+    private UserEntity getUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String name;
         if (principal instanceof UserDetails) {
@@ -73,7 +66,7 @@ public class SaidaFinanceiraUseCase {
             if (user.isEmpty()) {
                 throw new RuntimeException("Usuário não encontrado.");
             }
-            return user.get().getId();
+            return user.get();
         } else {
             throw new RuntimeException("Usuário não encontrado.");
         }
