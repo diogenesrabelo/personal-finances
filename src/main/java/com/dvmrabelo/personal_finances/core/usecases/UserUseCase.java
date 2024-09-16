@@ -29,7 +29,7 @@ public class UserUseCase implements UserDetailsService {
             throw new RuntimeException("Username já existe.");
         }
 
-        RoleEntity role = new RoleEntity("ROLE_USER");
+        RoleEntity role = new RoleEntity("USER");
 
         UserEntity userEntity = new UserEntity(user.username(), passwordEncoder.encode(user.password()), true, Set.of(role));
 
