@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydatabase
+    username: user
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  application:
+    name: security-base
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 18664246786-c8flftgf96drrvbrti480obduksup642.apps.googleusercontent.com
+            client-secret: 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
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+
+
+  cloud:
+    openfeign:
+      httpclient:
+        disable-ssl-validation: true
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 600000
+        readTimeout: 600000
+
+
+logging:
+  pattern:
+    console: logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n
+  level:
+    org:
+      springframework:
+        web: DEBUG
+    com:
+      myapp:
+        service: INFO
